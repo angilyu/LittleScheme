@@ -49,7 +49,7 @@ def getToken(text, pos):
     tokenType, pos = extractVariable(text, pos)
 
 # Utilities functions
-_COMMENT_START_ = '"'
+_COMMENT_START_ = ';'
 def _skipWhitespace(text, pos):
     while pos != len(text):
         if text[pos] in string.whitespace:
