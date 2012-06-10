@@ -29,6 +29,7 @@ def _skipWhitespace(text, pos):
     return pos
 
 def _skipToNextLine(text, pos):
+    # TODO: WHAT if the new line is not represented by '\n'?
     while pos != len(text):
         if text[pos] == '\n':
             return pos + 1
@@ -61,21 +62,4 @@ def tokenize(text):
         pos = _skip(text, pos)
         token, pos = _fetchToken(text, pos)
         yield token
-
-for token in tokenize("(map proc items)"):
-    print token
-
-if __name__ == "__main__":
-    text = """
-    # the comment line should be ignored
-        real text 1
-        real text 2"""
-    pos = _skipWhitespace(text, 0)
-    print text[pos:]
-    print
-    pos = _skip(text, 0)
-    print text[pos:]
-
-    pos = _skipToNextLine(text, pos)
-    print "HA", text[pos:]
 
