@@ -11,17 +11,42 @@ class Tokens:
     # text enclosed by ", can use \" to escape internal `double quote`
     STRING = 10
     # either #t or #f
-    BOOLEAN = 11
-    NUMBER = 12
+    NUMBER = 11
     # variable could be composed by alphabets (a-z, A-Z) and digits (0~9)
     # or special characters: ! $ % & * + - . / : < = > ? @ ^ _ ~
-    VARIABLE = 13
+    VARIABLE = 12
+    TRUE = 13 # #t
+    FALSE = 14 # #f
 
     # -- Keywords
-    DEFINE = 21
-    COND = 22
-    IF = 24
-    SET = 23
+    DEFINE = 20
+    COND = 21
+    IF = 22
+    SET = 22
+
+    # -- Undefined
+    UNDEFINED = 30
+
+
+def getToken(text, pos):
+    # TODO: can use the "trie" to do the fast detection
+    # right now we just use some linear
+    tokenType, pos = exactMatch(text, pos)
+    if tokenType != Tokens.UNDEFINED:
+        return (tokenType, pos)
+
+    # try match number/string
+    possibleToken = fastDispatch(text, pos)
+    if possibleToken == Tokens.NUMBER:
+        tokenType, pos = extractNumber(text, pos)
+    elif possibleToken == Tokens.STRING:
+        tokenType, pos = extractNumber(text, pos)
+
+    if tokenType != Tokens.UNDEFINED:
+        return (tokenType, pos)
+
+    # try match variable
+    tokenType, pos = extractVariable(text, pos)
 
 # Utilities functions
 _COMMENT_START_ = '"'
