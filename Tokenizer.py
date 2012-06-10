@@ -2,17 +2,22 @@ import string
 
 # Constants for Tokens
 class Tokens:
-    # Characters
-    LPAREN = 1
-    RPAREN = 2
-    QUOTE = 3
+    # -- Characters
+    LPAREN = 1 # "("
+    RPAREN = 2 # ")"
+    QUOTE = 3 # "'"
 
-    # Primitives
+    # -- Primitives
+    # text enclosed by ", can use \" to escape internal `double quote`
     STRING = 10
+    # either #t or #f
     BOOLEAN = 11
-    VARIABLE = 12
+    NUMBER = 12
+    # variable could be composed by alphabets (a-z, A-Z) and digits (0~9)
+    # or special characters: ! $ % & * + - . / : < = > ? @ ^ _ ~
+    VARIABLE = 13
 
-    # Keywords
+    # -- Keywords
     DEFINE = 21
     COND = 22
     IF = 24
