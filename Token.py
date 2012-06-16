@@ -1,17 +1,16 @@
 
 # Constants for Tokens
 class Tokens:
+    ##### TOKEN IDs #####
     # -- Characters
     LPAREN = 1 # "("
     RPAREN = 2 # ")"
     QUOTE = 3 # "'"
 
     # -- Primitives
-    # text enclosed by ", can use \" to escape internal `double quote`
     STRING = 10 # "example"
     TRUE = 11 # #t
     FALSE = 12 # #f
-    # ------
     NUMBER = 13
     VARIABLE = 14
 
@@ -25,6 +24,30 @@ class Tokens:
 
     # -- Undefined
     UNDEFINED = 30
+
+    ##### TOKEN Names #####
+    tokenNames = {
+        LPAREN: "(",
+        RPAREN: ")",
+        QUOTE: "'",
+
+        STRING: "string",
+        NUMBER: "number",
+        VARIABLE: "variable",
+
+        DEFINE: "define",
+        COND: "cond",
+        IF: "if",
+        ELSE: "else",
+        ASSIGNMENT: "set!",
+        NULL: "null",
+        TRUE: "#t",
+        FALSE: "#f",
+    }
+
+    specialCharacters = [LPAREN, RPAREN, QUOTE]
+    primitives = [STRING, NUMBER, VARIABLE]
+    keywords = [DEFINE, COND, IF, ELSE, ASSIGNMENT, NULL, TRUE, FALSE]
 
 class Token:
     def __init__(self, tokenType, pos, literal = None):
