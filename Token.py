@@ -13,8 +13,6 @@ class Tokens:
     FALSE = 12 # #f
     # ------
     NUMBER = 13
-    # variable could be composed by alphabets (a-z, A-Z) and digits (0~9)
-    # or special characters: ! $ % & * + - . / : < = > ? @ ^ _ ~
     VARIABLE = 14
 
     # -- Keywords

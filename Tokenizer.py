@@ -8,25 +8,25 @@ class Tokens:
     QUOTE = 3 # "'"
 
     # -- Primitives
+    # TODO: remember to reorder the id numbers
     # text enclosed by ", can use \" to escape internal `double quote`
-    STRING = 10
-    # either #t or #f
+    STRING = 10 # "example"
+    TRUE = 13 # #t
+    FALSE = 14 # #f
+    # ------
     NUMBER = 11
     # variable could be composed by alphabets (a-z, A-Z) and digits (0~9)
     # or special characters: ! $ % & * + - . / : < = > ? @ ^ _ ~
     VARIABLE = 12
-    TRUE = 13 # #t
-    FALSE = 14 # #f
 
     # -- Keywords
-    DEFINE = 20
-    COND = 21
-    IF = 22
-    SET = 22
+    DEFINE = 20 # define
+    COND = 21 # cond
+    IF = 22 # if
+    ASSIGNMENT = 22 # set!
 
     # -- Undefined
     UNDEFINED = 30
-
 
 def getToken(text, pos):
     # TODO: can use the "trie" to do the fast detection
