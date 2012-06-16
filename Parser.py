@@ -1,7 +1,7 @@
 from Token import *
 from Expression import *
 
-# Error code for the parsing
+####### Error code #######
 _OK = 0 # Expression has been extracted
 _CE_ENDS = 1 # compound expression ends
 _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
@@ -59,21 +59,3 @@ def _parse(tokenIter):
 def parse(tokenIter):
     while True:
         yield _parse(tokenIter)
-
-tokens = [
-          Token(Tokens.LPAREN, 0),
-              Token(Tokens.VARIABLE, 0, "+"),
-
-              Token(Tokens.LPAREN, 0),
-                  Token(Tokens.NUMBER, 0, 123),
-                  Token(Tokens.STRING, 0, "haha"),
-              Token(Tokens.RPAREN, 0),
-
-          Token(Tokens.RPAREN, 0),
-
-          Token(Tokens.STRING, 0, "holy"),
-         ]
-
-for exp in parse(tokens.__iter__()):
-    print exp[1]
-
