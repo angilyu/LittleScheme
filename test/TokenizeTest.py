@@ -40,26 +40,25 @@ class SkipFunctionsTest(unittest.TestCase):
         self.assertEqual(text[pos:], "Nil")
     def test_getToken(self):
         text = "(cons 1 2)"
-        exist, pos, token = Tokenize.getToken(text, 0)
-        self.assertEqual(exist, True)
-        self.assertEqual(pos, 1)
-        self.assertTokenEqual(token, Token(Tokens.LPAREN, 0, "("))
+        result = Tokenize._extractToken(text, 0)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result[1], 1)
+        self.assertTokenEqual(result[0], Token(Tokens.LPAREN, 0))
 
         text = "   "
-        exist, pos, token = Tokenize.getToken(text, 0)
-        self.assertEqual(exist, False)
-        self.assertEqual(pos, 0)
-        self.assertTokenEqual(token, None)
+        result = Tokenize._extractToken(text, 0)
+        self.assertIsNone(result)
     def test_tokenzie(self):
         text = \
 """("hi, I am Wenjing"  #t  #f
 """
         results = list(Tokenize.tokenize(text, 0))
         self.assertEqual(len(results), 4)
-        self.assertTokenEqual(results[0], Token(Tokens.LPAREN, 0, "("))
+        self.assertTokenEqual(results[0], Token(Tokens.LPAREN, 0))
         self.assertTokenEqual(results[1], Token(Tokens.STRING, 1, "hi, I am Wenjing"))
-        self.assertTokenEqual(results[2], Token(Tokens.TRUE, 21, "#t"))
-        self.assertTokenEqual(results[3], Token(Tokens.FALSE, 25, "#f"))
+        self.assertTokenEqual(results[2], Token(Tokens.TRUE, 21))
+        self.assertTokenEqual(results[3], Token(Tokens.FALSE, 25))
 
 
     # Helpers

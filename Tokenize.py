@@ -1,8 +1,17 @@
 import string
 from Token import *
 
-
+######## CONSTANTS ########
 _COMMENT_START_ = ';'
+_CHARACTERS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
+_PRIMITIVES = ["#t","#f"]
+_LEGAL_CHARACTERS = string.letters + string.digits + "!$%&*+-./:<=>?@^_~"
+_KEYWORDS = ["define", "cond", "if", "else", "set!", "null"]
+ESCAPED_CHAR = {"\\":"\\", "\"":"\"", "a":"\a", "b":"\b", "f":"\f", "n":"\n", "r":"\r", "t":"\t"}
+DOUBLE_QUOTE = '"'
+BACK_SLASH = '\\'
+
+######## SKIP ########
 def _skipToNextLine(text, pos):
     while pos < len(text):
         if text[pos] == '\n':
@@ -31,59 +40,79 @@ def _skip(text, pos):
             else:
                 pos = newPos
     return pos
-characters = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
-primitives = ["#t","#f"]
-legalCharacters = string.letters + string.digits + "!$%&*+-./:<=>?@^_~"
-keywords = ["define", "cond", "if", "else", "set!", "null"]
 
-def checkCharacters(text, pos):
-    if text[pos] in characters:
-        return True, pos + 1, Token(characters[text[pos]], pos, text[pos])
-    else:
-        return False, pos, None
+######## EXTRACT TOKENS ########
+def _extractCharacters(text, pos):
+    if text[pos] in _CHARACTERS:
+        return Token(_CHARACTERS[text[pos]], pos), pos + 1
 
-escapedCharacters = {"\\":"\\", "\"":"\"", "a":"\a", "b":"\b", "f":"\f", "n":"\n", "r":"\r", "t":"\t"}
-def checkString(text, pos):
+    return None
+
+def _extractString(text, pos):
     originalPos = pos
-    if text[pos] != "\"":
-        return False, pos, None
+    # check the leading double quote
+    if text[pos] != DOUBLE_QUOTE:
+        return None
+
     pos += 1
     parsedString = ""
     while True:
-        if text[pos] == "\"":
+        if text[pos] == DOUBLE_QUOTE:
             break
-        if text[pos] != "\\":
+        if text[pos] != BACK_SLASH:
             parsedString += text[pos]
             pos += 1
         else:
-            if text[pos + 1] in escapedCharacters:
-                parsedString += escapedCharacters[text[pos + 1]]
+            if text[pos + 1] in ESCAPED_CHAR:
+                parsedString += ESCAPED_CHAR[text[pos + 1]]
                 pos += 2
             else:
                 assert False
-    token = Token(Tokens.STRING, originalPos, parsedString)
-    return True, pos + 1, token
-def checkTrueFalse(text, pos):
-    if text[pos:pos + 2] == "#t":
-        return True, pos + 2, Token(Tokens.TRUE, pos, "#t")
-    elif text[pos:pos + 2] == "#f":
-        return True, pos + 2, Token(Tokens.FALSE, pos, "#f")
-    else:
-        return False, pos, None
-def getToken(text, pos):
-    exist, pos, token = checkCharacters(text, pos)
-    if False == exist:
-        exist, pos, token = checkString(text, pos)
-    if False == exist:
-        exist, pos, token = checkTrueFalse(text, pos)
-    return exist, pos, token
+    return Token(Tokens.STRING, originalPos, parsedString), pos + 1
 
+def _extractBoolean(text, pos):
+    # check if there's enough space for them
+    if len(text) - pos < 2:
+        return None
+
+    prefix = text[pos: pos + 2]
+    if prefix not in _PRIMITIVES:
+        return None
+
+    if len(text) - pos >= 3 and text[pos + 2] in _LEGAL_CHARACTERS:
+        return None
+
+    tokenType = Tokens.TRUE if prefix[1] == "t" else Tokens.FALSE
+    return Token(tokenType, pos), pos + 2
+
+def _extractToken(text, pos):
+    """ TODO: Please add comment on the return value """
+    """ TODO: Please return (token, pos) if successful; otherwise return None """
+
+    result = _extractCharacters(text, pos)
+
+    # check string
+    if result is None:
+        result = _extractString(text, pos)
+
+    # check boolean
+    if result is None:
+        result = _extractBoolean(text, pos)
+
+    return result
+
+###### tokenize() ######
 def tokenize(text, pos):
+    """ tokenize() is a generator that takes the text as the input and returns
+        a token every time.
+    """
     while pos < len(text):
         pos = _skip(text, pos)
         if pos < len(text):
-            exist, pos, token = getToken(text, pos)
-        if exist:
-            exist = False
-            yield token
-    return
+            result = _extractToken(text, pos)
+            if result is None:
+                break
+            else:
+                token, pos = result
+                yield token
+

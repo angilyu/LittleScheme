@@ -83,9 +83,6 @@ def _fetchToken(text, pos):
     pass
 
 def tokenize(text):
-    """ tokenize() is a generator that takes the text as the input and returns
-        a token every time.
-    """
     pos = 0
     while pos != len(text):
         # skip white spaces and the comments
