@@ -28,14 +28,17 @@ class Tokens:
 
     ##### TOKEN Names #####
     tokenNames = {
+        # Basic characters
         LPAREN: "(",
         RPAREN: ")",
         QUOTE: "'",
 
+        # Primitives
         STRING: "string",
         NUMBER: "number",
         VARIABLE: "variable",
 
+        # Keywords
         DEFINE: "define",
         COND: "cond",
         IF: "if",
@@ -50,7 +53,8 @@ class Tokens:
     specialCharacters = [LPAREN, RPAREN, QUOTE]
     primitives = [STRING, NUMBER, VARIABLE]
     keywords = [DEFINE, COND, IF, ELSE, ASSIGNMENT, NULL, TRUE, FALSE, LAMBDA]
-    keywordStrings = {"define":DEFINE, "cond":COND, "if":IF, "else":ELSE, "set!":ASSIGNMENT, "null":NULL, "lambda":LAMBDA}
+    keywordStrings = {"define":DEFINE, "cond":COND, "if":IF, "else":ELSE,\
+                      "set!":ASSIGNMENT, "null":NULL, "lambda":LAMBDA}
 
 class Token:
     def __init__(self, tokenType, pos, literal = None):

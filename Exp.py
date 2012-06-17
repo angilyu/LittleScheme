@@ -1,11 +1,23 @@
 from Token import *
 
+
 class AtomExp:
     def __init__(self, token):
         self.tokenType = token.tokenType
         self.literal = token.literal
+
     def isCompound(self):
         return False
+
+    def isKeyword(self):
+        return self.tokenType in Tokens.keywords
+    def isString(self):
+        return self.tokenType == Tokens.STRING
+    def isNumber(self):
+        return self.tokenType == Tokens.NUMBER
+    def isVariable(self):
+        return self.tokenType == Tokens.VARIABLE
+
     def __str__(self):
         if self.tokenType in Tokens.keywords:
             return str(Tokens.tokenNames[self.tokenType])
