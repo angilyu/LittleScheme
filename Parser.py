@@ -1,5 +1,5 @@
 from Token import *
-from Expression import *
+from Exp import *
 
 ####### Error code #######
 _OK = 0 # Expression has been extracted
@@ -26,7 +26,7 @@ def _parse(tokenIter):
     # All tokens, except the special characters, are considered
     # to be "atom"
     if not token.tokenType in Tokens.specialCharacters:
-        return True, AtomExpression(token)
+        return True, AtomExp(token)
 
     # If the token either indicates the atomic expression nor teh end of
     # compoun expression, then it must be the "beginning" of a compound
@@ -38,7 +38,7 @@ def _parse(tokenIter):
     error, op = _parse(tokenIter)
     if error != True:
         return _EMPTY_EXPRESSION, result
-    exp = CompoundExpression(op)
+    exp = CompoundExp(op)
 
     # Read parameters
     while True:
