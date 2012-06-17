@@ -6,7 +6,6 @@ _COMMENT_START_ = ';'
 _CHARACTERS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
 _PRIMITIVES = ["#t","#f"]
 _LEGAL_CHARACTERS = string.letters + string.digits + "!$%&*+-./:<=>?@^_~"
-_KEYWORDS = ["define", "cond", "if", "else", "set!", "null"]
 ESCAPED_CHAR = {"\\":"\\", "\"":"\"", "a":"\a", "b":"\b", "f":"\f", "n":"\n", "r":"\r", "t":"\t"}
 DOUBLE_QUOTE = '"'
 BACK_SLASH = '\\'
@@ -85,19 +84,57 @@ def _extractBoolean(text, pos):
     tokenType = Tokens.TRUE if prefix[1] == "t" else Tokens.FALSE
     return Token(tokenType, pos), pos + 2
 
+def isNumber(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+def isKeywords(s):
+    if s in Tokens.keywordStrings:
+        return True
+    else:
+        return False
+def _extractVariable(text, pos):
+    originalPos = pos
+    variable = ""
+    while pos < len(text):
+        if text[pos] in _LEGAL_CHARACTERS:
+            variable += text[pos]
+            pos += 1
+        else:
+            break
+    if pos == originalPos:
+        return None
+    else:
+        literal = None
+        if isNumber(variable):
+            tokenType = Tokens.NUMBER
+            literal = float(variable)
+        elif isKeywords(variable):
+            tokenType = Tokens.keywordStrings[variable]
+            literal = variable
+        else:
+            tokenType = Tokens.VARIABLE
+            literal = variable
+        return Token(tokenType, originalPos, literal), pos
+
 def _extractToken(text, pos):
     """ TODO: Please add comment on the return value """
-    """ TODO: Please return (token, pos) if successful; otherwise return None """
 
     result = _extractCharacters(text, pos)
 
-    # check string
+    # extract string
     if result is None:
         result = _extractString(text, pos)
 
-    # check boolean
+    # extract boolean
     if result is None:
         result = _extractBoolean(text, pos)
+
+    #extract variable
+    if result is None:
+        result = _extractVariable(text, pos)
 
     return result
 
