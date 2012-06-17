@@ -84,17 +84,15 @@ def _extractBoolean(text, pos):
     tokenType = Tokens.TRUE if prefix[1] == "t" else Tokens.FALSE
     return Token(tokenType, pos), pos + 2
 
-def isNumber(s):
+def _isNumber(s):
     try:
         float(s)
         return True
     except ValueError:
         return False
-def isKeywords(s):
-    if s in Tokens.keywordStrings:
-        return True
-    else:
-        return False
+def _isKeywords(s):
+    return s in Tokens.keywordStrings
+
 def _extractVariable(text, pos):
     originalPos = pos
     variable = ""
@@ -108,10 +106,10 @@ def _extractVariable(text, pos):
         return None
     else:
         literal = None
-        if isNumber(variable):
+        if _isNumber(variable):
             tokenType = Tokens.NUMBER
             literal = float(variable)
-        elif isKeywords(variable):
+        elif _isKeywords(variable):
             tokenType = Tokens.keywordStrings[variable]
             literal = None
         else:
