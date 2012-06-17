@@ -60,9 +60,26 @@ class SkipFunctionsTest(unittest.TestCase):
         self.assertTokenEqual(results[2], Token(Tokens.TRUE, 21))
         self.assertTokenEqual(results[3], Token(Tokens.FALSE, 25))
         self.assertTokenEqual(results[4], Token(Tokens.VARIABLE, 28, "result"))
-        self.assertTokenEqual(results[5], Token(Tokens.COND, 35, "cond"))
+        self.assertTokenEqual(results[5], Token(Tokens.COND, 35, ))
         self.assertTokenEqual(results[6], Token(Tokens.NUMBER, 40, 123))
 
+        text = "(('))"
+        results = list(Tokenize.tokenize(text, 0))
+        self.assertEqual(len(results), 5)
+        self.assertTokenEqual(results[0], Token(Tokens.LPAREN, 0))
+        self.assertTokenEqual(results[1], Token(Tokens.LPAREN, 1))
+        self.assertTokenEqual(results[2], Token(Tokens.QUOTE, 2))
+        self.assertTokenEqual(results[3], Token(Tokens.RPAREN, 3))
+        self.assertTokenEqual(results[4], Token(Tokens.RPAREN, 4))
+
+        text = """(cond "hello" 12)"""
+        results = list(Tokenize.tokenize(text, 0))
+        self.assertEqual(len(results), 5)
+        self.assertTokenEqual(results[0], Token(Tokens.LPAREN, 0))
+        self.assertTokenEqual(results[1], Token(Tokens.COND, 1))
+        self.assertTokenEqual(results[2], Token(Tokens.STRING, 6, "hello"))
+        self.assertTokenEqual(results[3], Token(Tokens.NUMBER, 14, 12))
+        self.assertTokenEqual(results[4], Token(Tokens.RPAREN, 16))
     # Helpers
     def assertTokenEqual(self, token1, token2):
         if token1 == None:
