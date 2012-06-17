@@ -1,6 +1,5 @@
 from Token import *
 
-
 class AtomExp:
     def __init__(self, token):
         self.tokenType = token.tokenType
@@ -9,20 +8,17 @@ class AtomExp:
     def isCompound(self):
         return False
 
-    def isKeyword(self):
-        return self.tokenType in Tokens.keywords
-    def isString(self):
-        return self.tokenType == Tokens.STRING
-    def isNumber(self):
-        return self.tokenType == Tokens.NUMBER
-    def isVariable(self):
-        return self.tokenType == Tokens.VARIABLE
-
     def __str__(self):
-        if self.tokenType in Tokens.keywords:
-            return str(Tokens.tokenNames[self.tokenType])
-        else:
+        if self.tokenType == Tokens.STRING:
+            return '"%s"' % self.literal
+        elif self.tokenType == Tokens.NUMBER:
             return str(self.literal)
+        elif self.tokenType == Tokens.VARIABLE:
+            return "'%s" % self.literal
+        elif self.tokenType in Tokens.keywords:
+            return str(Tokens.tokenNames[self.tokenType])
+
+        assert False
 
 class CompoundExp:
     def __init__(self, operator):
@@ -35,8 +31,6 @@ class CompoundExp:
     def isCompound(self):
         return True
     def __str__(self):
-        strs = ["(", str(self.operator)]
-        strs.extend(str(p) for p in self.parameters)
-        strs.append(")")
-        return " ".join(strs)
+        strs = [str(p) for p in self.parameters]
+        return "(%s)" % " ".join(strs)
 
