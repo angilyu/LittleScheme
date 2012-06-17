@@ -113,7 +113,7 @@ def _extractVariable(text, pos):
             literal = float(variable)
         elif isKeywords(variable):
             tokenType = Tokens.keywordStrings[variable]
-            literal = variable
+            literal = None
         else:
             tokenType = Tokens.VARIABLE
             literal = variable
