@@ -51,15 +51,17 @@ class SkipFunctionsTest(unittest.TestCase):
         self.assertIsNone(result)
     def test_tokenzie(self):
         text = \
-"""("hi, I am Wenjing"  #t  #f
+"""("hi, I am Wenjing"  #t  #f result cond 123
 """
         results = list(Tokenize.tokenize(text, 0))
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 7)
         self.assertTokenEqual(results[0], Token(Tokens.LPAREN, 0))
         self.assertTokenEqual(results[1], Token(Tokens.STRING, 1, "hi, I am Wenjing"))
         self.assertTokenEqual(results[2], Token(Tokens.TRUE, 21))
         self.assertTokenEqual(results[3], Token(Tokens.FALSE, 25))
-
+        self.assertTokenEqual(results[4], Token(Tokens.VARIABLE, 28, "result"))
+        self.assertTokenEqual(results[5], Token(Tokens.COND, 35, "cond"))
+        self.assertTokenEqual(results[6], Token(Tokens.NUMBER, 40, 123))
 
     # Helpers
     def assertTokenEqual(self, token1, token2):

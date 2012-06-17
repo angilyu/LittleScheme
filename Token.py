@@ -21,6 +21,7 @@ class Tokens:
     ELSE = 23 # else
     ASSIGNMENT = 24 # set!
     NULL = 25 # NULL
+    LAMBDA = 26 # lambda
 
     # -- Undefined
     UNDEFINED = 30
@@ -43,11 +44,13 @@ class Tokens:
         NULL: "null",
         TRUE: "#t",
         FALSE: "#f",
+        LAMBDA: "lambda",
     }
 
     specialCharacters = [LPAREN, RPAREN, QUOTE]
     primitives = [STRING, NUMBER, VARIABLE]
-    keywords = [DEFINE, COND, IF, ELSE, ASSIGNMENT, NULL, TRUE, FALSE]
+    keywords = [DEFINE, COND, IF, ELSE, ASSIGNMENT, NULL, TRUE, FALSE, LAMBDA]
+    keywordStrings = {"define":DEFINE, "cond":COND, "if":IF, "else":ELSE, "set!":ASSIGNMENT, "null":NULL, "lambda":LAMBDA}
 
 class Token:
     def __init__(self, tokenType, pos, literal = None):
