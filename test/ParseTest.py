@@ -2,24 +2,24 @@ import TestConfig
 import unittest
 import Parser
 from Token import *
-from Expression import *
+from Exp import *
 
 class ExpressionTest(unittest.TestCase):
     def test_primitive_expression(self):
         # String
         token = Token(Tokens.STRING, 0, "token")
         exp = self._parseAsList(self._asIter(token), 1)[0]
-        self._assertExpressionEqual(AtomExpression(token), exp)
+        self._assertExpressionEqual(AtomExp(token), exp)
 
         # Number
         token = Token(Tokens.NUMBER, 0, 1234)
         exp = self._parseAsList(self._asIter(token), 1)[0]
-        self._assertExpressionEqual(AtomExpression(token), exp)
+        self._assertExpressionEqual(AtomExp(token), exp)
 
         # BOOLEAN
         token = Token(Tokens.TRUE, 0)
         exp = self._parseAsList(self._asIter(token), 1)[0]
-        self._assertExpressionEqual(AtomExpression(token), exp)
+        self._assertExpressionEqual(AtomExp(token), exp)
 
     def test_one_compound_expression(self):
         tokens, expected = self._makeSampleCompundExpression()
@@ -39,7 +39,7 @@ class ExpressionTest(unittest.TestCase):
         self._assertExpressionEqual(expected, results[1])
 
         # test the last atom expression
-        self._assertExpressionEqual(AtomExpression(atom), results[2])
+        self._assertExpressionEqual(AtomExp(atom), results[2])
 
     # Helpers
     def _makeSampleCompundExpression(self):
@@ -59,16 +59,16 @@ class ExpressionTest(unittest.TestCase):
          ]
 
         # making the expected expression
-        op = AtomExpression(Token(Tokens.VARIABLE, 1, "cons"))
-        inner = CompoundExpression(op)
+        op = AtomExp(Token(Tokens.VARIABLE, 1, "cons"))
+        inner = CompoundExp(op)
         inner.parameters = [
-                AtomExpression(Token(Tokens.STRING, 9, "key")),
-                AtomExpression(Token(Tokens.VARIABLE, 15, "variable"))]
+                AtomExp(Token(Tokens.STRING, 9, "key")),
+                AtomExp(Token(Tokens.VARIABLE, 15, "variable"))]
 
-        op = AtomExpression(Token(Tokens.VARIABLE, 1, "+"))
-        expected = CompoundExpression(op)
+        op = AtomExp(Token(Tokens.VARIABLE, 1, "+"))
+        expected = CompoundExp(op)
         expected.parameters = [
-            inner, AtomExpression(Token(Tokens.NUMBER, 9, 234))]
+            inner, AtomExp(Token(Tokens.NUMBER, 9, 234))]
 
         return tokens, expected
 

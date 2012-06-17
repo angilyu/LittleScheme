@@ -1,9 +1,6 @@
 from Token import *
 
-class Expression:
-    pass
-
-class AtomExpression(Expression):
+class AtomExp:
     def __init__(self, token):
         self.tokenType = token.tokenType
         self.literal = token.literal
@@ -15,7 +12,7 @@ class AtomExpression(Expression):
         else:
             return str(self.literal)
 
-class CompoundExpression(Expression):
+class CompoundExp:
     def __init__(self, operator):
         self.operator = operator
         self.parameters = []
