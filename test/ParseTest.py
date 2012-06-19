@@ -106,10 +106,5 @@ class ExpressionTest(unittest.TestCase):
             self._assertExpressionEqual(expected.parameters[index],
                                         actual.parameters[index])
 
-
-
-
-
-
 if __name__ == '__main__':
     unittest.main()

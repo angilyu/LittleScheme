@@ -5,7 +5,7 @@ from Exp import *
 _OK = 0 # Expression has been extracted
 _CE_ENDS = 1 # compound expression ends
 _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
-_EMPTY_EXPRESSION = 2 # EMPTY EXPRESSION
+_EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
 
 def _parse(tokenIter):
     """ _parse() recursively extract the expression from the given
@@ -19,14 +19,14 @@ def _parse(tokenIter):
     """
     token = tokenIter.next()
 
-    # check if this is the start of an compound expression
-    if token.tokenType == Tokens.RPAREN:
-        return (_CE_ENDS, token), None
-
     # All tokens, except the special characters, are considered
     # to be "atom"
     if not token.tokenType in Tokens.specialCharacters:
         return True, AtomExp(token)
+
+    # check if this is the start of an compound expression
+    if token.tokenType == Tokens.RPAREN:
+        return (_CE_ENDS, token), None
 
     # If the token either indicates the atomic expression nor teh end of
     # compoun expression, then it must be the "beginning" of a compound
