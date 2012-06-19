@@ -23,7 +23,7 @@ def makePair(val):
     """ val should be python's binary tuple """
     return Value(Values.PAIR, val)
 def makePrecedure(val):
-    return Values(Values.PROCEDURE, val)
+    return Values(Values.PROCEDURE, (True, val))
 
 class Value:
     def __init__(self, valueType, val):
