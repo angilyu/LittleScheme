@@ -1,4 +1,11 @@
 from Token import *
+from Values import *
+
+_atomProcessors = {
+    Tokens.STRING: makeString,
+    Tokens.NUMBER: makeNumber,
+    Tokens.BOOLEAN: makeBoolean,
+}
 
 def _evalOp(compound, env):
     # Get the operator, the operator could be either 'keywords' or procedure.
@@ -18,16 +25,10 @@ def _evalCompound(compound, env):
         return sapply(op, parameters, env)
 
 def _evalAtom(atom, env):
-    if atom.tokenType == Tokens.STRING:
-        pass
-    elif atom.tokenType == Tokens.NUMBER:
-        pass
+    if atom.tokenType in _atomProcessors:
+        _atomProcessors[atom.tokenType](atom.literal)
     elif atom.tokenType == Tokens.VARIABLE:
         return env[atom.literal]
-    elif atom.tokenType == NULL:
-        pass
-    elif atom.tokenType in [Tokens.TRUE, Tokens.FALSE]:
-        pass
     else:
         assert False
 
@@ -37,3 +38,6 @@ def seval(exp, env):
     else:
         _evalAtom(exp, env)
 
+def sapply(op, params, env):
+    env = setupEnv(env, params)
+    return seval(op, env)
