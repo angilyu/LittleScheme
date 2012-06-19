@@ -1,10 +1,9 @@
 from Token import *
-from Values import *
+from Value import *
 
 _atomProcessors = {
     Tokens.STRING: makeString,
     Tokens.NUMBER: makeNumber,
-    Tokens.BOOLEAN: makeBoolean,
 }
 
 def _evalOp(compound, env):
@@ -27,6 +26,8 @@ def _evalCompound(compound, env):
 def _evalAtom(atom, env):
     if atom.tokenType in _atomProcessors:
         _atomProcessors[atom.tokenType](atom.literal)
+    elif atom.tokenType == Tokens.TRUE or atom.tokenType == TOKENS.FALSE:
+        makeBoolean(atom.tokenType == Tokens.TRUE)
     elif atom.tokenType == Tokens.VARIABLE:
         return env[atom.literal]
     else:
