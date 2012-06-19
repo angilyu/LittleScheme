@@ -77,7 +77,7 @@ class ExpressionTest(unittest.TestCase):
         self.assertEqual(expectedLen, len(result))
 
         for item in result:
-            self.assertTrue(item[0])
+            self.assertEqual(Parser._OK, item[0])
 
         return [item[1] for item in result]
 
