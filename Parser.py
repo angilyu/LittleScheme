@@ -2,6 +2,7 @@ from Token import *
 from Exp import *
 
 ####### Error code #######
+# TODO: the error code should be public
 _OK = 0 # Expression has been extracted
 _CE_ENDS = 1 # compound expression ends
 _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.

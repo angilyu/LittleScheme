@@ -14,8 +14,10 @@ class Interpreter:
         _loadLibrary(self.glob)
     def execute(self, cmd):
         tokens = Tokenize.tokenize(cmd, 0)
-        for exp in Parser.parse(tokens):
-            seval(cmd)
+        for success, exp in Parser.parse(tokens):
+            if success != Parser._OK:
+                print "Error occurs:", success
+                return
 
 it = Interpreter()
-
+it.execute("(+ 5 6)")
