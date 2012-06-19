@@ -13,7 +13,7 @@ def _parse(tokenIter):
         \param tokenIter is the token iterator that represents the
                stream of tokens
         \return a pair, where the first parameter reports the error code
-                occurs while parsing (True indicates no error happens);
+                occurs while parsing (_OK indicates no error happens);
                 the second parameter is the extracted expression, which will
                 be None if error occurs.
     """
@@ -26,7 +26,7 @@ def _parse(tokenIter):
     # All tokens, except the special characters, are considered
     # to be "atom"
     if not token.tokenType in Tokens.specialCharacters:
-        return True, AtomExp(token)
+        return _OK, AtomExp(token)
 
     # If the token either indicates the atomic expression nor teh end of
     # compoun expression, then it must be the "beginning" of a compound
@@ -36,7 +36,7 @@ def _parse(tokenIter):
 
     # Read operator
     error, op = _parse(tokenIter)
-    if error != True:
+    if error != _OK:
         return _EMPTY_EXPRESSION, result
     exp = CompoundExp(op)
 
@@ -44,7 +44,7 @@ def _parse(tokenIter):
     while True:
         error, param = _parse(tokenIter)
 
-        if error != True:
+        if error != _OK:
             # reach the end the this compound expression?
             if error[0] == _CE_ENDS:
                 break
@@ -54,7 +54,7 @@ def _parse(tokenIter):
 
         exp.addParameter(param)
 
-    return True, exp
+    return _OK, exp
 
 def parse(tokenIter):
     while True:
