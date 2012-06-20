@@ -7,6 +7,12 @@ _OK = 0 # Expression has been extracted
 _CE_ENDS = 1 # compound expression ends
 _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
 _EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
+_NOT_AN_EXPRESSION = 4
+
+BUILDIN_OPERATORS = set([ Tokens.DEFINE, Tokens.COND, Tokens.IF,
+                          Tokens.ELSE, Tokens.ASSIGNMENT, Tokens.LAMBDA])
+def _isBuildin(exp):
+    return not exp.isCompound() and exp.tokenType in BUILDIN_OPERATORS
 
 def _parse(tokenIter):
     """ _parse() recursively extract the expression from the given
@@ -35,10 +41,13 @@ def _parse(tokenIter):
     if token.tokenType != Tokens.LPAREN:
         return (_EXPECT_LPAREN, token), None
 
-    # Read operator
+    # -- Read operator
     error, op = _parse(tokenIter)
     if error != _OK:
         return _EMPTY_EXPRESSION, result
+    # check if the operator is a buildin operator
+    if _isBuildin(op):
+        op = op.tokenType
     exp = CompoundExp(op)
 
     # Read parameters
@@ -52,6 +61,9 @@ def _parse(tokenIter):
             # or real error occurs
             else:
                 return error, param
+
+        if _isBuildin(param):
+            return _NOT_AN_EXPRESSION, param
 
         exp.addParameter(param)
 

@@ -5,10 +5,18 @@ _atomProcessors = {
     Tokens.STRING: makeString,
     Tokens.NUMBER: makeNumber,
 }
+_keywordEvalTable = {
+    Tokens.DEFINE: None,
+    Tokens.COND: None,
+    Tokens.IF: None,
+    Tokens.ELSE: None,
+    Tokens.ASSIGNMENT: None,
+    Tokens.LAMBDA: None,
+}
 
 def _evalOp(compound, env):
     # Get the operator, the operator could be either 'keywords' or procedure.
-    if compound.operator.tokenType in Tokens.keywords:
+    if compound.operator in Tokens.keywords:
         return True, compound.operator.tokenType
     return False, seval(compound.operator, env)
 
@@ -18,7 +26,7 @@ def _evalCompound(compound, env):
 
     # Apply
     if isKeyword:
-        return keywordEvals[op](compound.parameters, env)
+        return keywordEvalTable[op](compound.parameters, env)
     else:
         parameters = [seval(param, env) for param in compound.parameters]
         return sapply(op, parameters, env)
@@ -33,11 +41,10 @@ def _evalAtom(atom, env):
     else:
         assert False
 
+############## Public Interface ##############
 def seval(exp, env):
-    if exp.isCompound():
-        return _evalCompound(exp, env)
-    else:
-        return _evalAtom(exp, env)
+    return _evalCompound(exp, env) if exp.isCompound() else \
+           _evalAtom(exp, env)
 
 def sapply(op, params, env):
     # builtin functions 
