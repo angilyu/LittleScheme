@@ -22,6 +22,11 @@ class AtomExp:
 
 class CompoundExp:
     def __init__(self, operator):
+        """ \params operator can be either be:
+                1. ID of defined buildin operators: such as `define`,
+                   `lambda`, etc.
+                2. Normal procedure: user defined procedure.
+        """
         self.operator = operator
         self.parameters = []
 
@@ -30,7 +35,9 @@ class CompoundExp:
 
     def isCompound(self):
         return True
+
     def __str__(self):
+        # TODO what if the opeator is the build-in operator?
         strs = [str(p) for p in self.parameters]
         return "(%s)" % " ".join(strs)
 
