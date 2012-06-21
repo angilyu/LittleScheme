@@ -18,7 +18,8 @@ class Interpreter:
             if success != Parser._OK:
                 print "Error occurs:", success
                 return
-            print Eval.seval(exp, self.glob)[1].val
+            return Eval.seval(exp, self.glob)[1]
 
 it = Interpreter()
-it.execute("(+ 5 6)")
+it.execute("(define a 1)")
+print it.execute("(+ a 6)").val

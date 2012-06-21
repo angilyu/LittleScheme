@@ -14,16 +14,39 @@ _atomProcessors = {
 }
 
 #### Evaluating the build-in operations ####
-def _evalDefine(exp, env):
+def _evalDefine(params, env):
     # Check correctness
-    if len(exp.parameters) != 2:
-        return INCORRECT_PARAM_NUMBER, 2, len(exp.parameters)
+    if len(params) != 2:
+        return INCORRECT_PARAM_NUMBER, 2, len(params)
 
-    symb = exp.parameters[0]
+    symb = params[0]
     if symb.isCompound() or symb.tokenType != Tokens.VARIABLE:
         return UNEXPECTED_TYPE, Tokens.VARIABLE, 0
 
-    env[symb] = seval(exp.parameters[1])
+    # TODO: should add error report here
+    result = seval(params[1], env)
+    if result[0] != Eval.OK:
+        return result
+
+    env[symb.literal] = result[1]
+    return EvalError.OK, None
+
+# TODO: this function has a lot of duplication
+def _assignmentEval(params, env):
+    # Check correctness
+    if len(params) != 2:
+        return INCORRECT_PARAM_NUMBER, 2, len(params)
+
+    symb = params[0]
+    if symb.isCompound() or symb.tokenType != Tokens.VARIABLE:
+        return UNEXPECTED_TYPE, Tokens.VARIABLE, 0
+
+    # TODO: should add error report here
+    result = seval(params[1], env)
+    if result[0] != Eval.OK:
+        return result
+
+    env[symb.literal] = result[1]
     return EvalError.OK, None
 
 _keywordEvalTable = {
@@ -37,7 +60,7 @@ _keywordEvalTable = {
 
 def _evalCompound(compound, env):
     if compound.isKeyword():
-        return keywordEvalTable[op](compound.parameters, env)
+        return _keywordEvalTable[compound.operator](compound.parameters, env)
     else:
         result = seval(compound.operator, env)
         if result[0] != EvalError.OK:
