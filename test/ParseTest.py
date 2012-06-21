@@ -1,6 +1,6 @@
 import TestConfig
 import unittest
-import Parser
+import Parse
 import Tokenize
 from Token import *
 from Exp import *
@@ -21,11 +21,6 @@ class ExpressionTest(unittest.TestCase):
         token = Token(Tokens.TRUE, 0)
         exp = self._parseAsList(self._asIter(token), 1)[0]
         self._assertExpressionEqual(AtomExp(token), exp)
-
-    def test_build_in_operator(self):
-        tokens = Tokenize.tokenize("(define a 1)", 0)
-        exp = self._parseAsList(tokens, 1)[0]
-        self.assertEqual(exp.operator, Tokens.DEFINE)
 
     def test_one_compound_expression(self):
         tokens, expected = self._makeSampleCompundExpression()
@@ -79,11 +74,11 @@ class ExpressionTest(unittest.TestCase):
         return tokens, expected
 
     def _parseAsList(self, tokenIter, expectedLen):
-        result = list(Parser.parse(tokenIter))
+        result = list(Parse.parse(tokenIter))
         self.assertEqual(expectedLen, len(result))
 
         for item in result:
-            self.assertEqual(Parser._OK, item[0])
+            self.assertEqual(Parse._OK, item[0])
 
         return [item[1] for item in result]
 

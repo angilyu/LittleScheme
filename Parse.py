@@ -31,7 +31,7 @@ def _parse(tokenIter):
     if not token.tokenType in Tokens.specialCharacters:
         return _OK, AtomExp(token)
 
-    # check if this is the start of an compound expression
+    # check if this is the end of an compound expression
     if token.tokenType == Tokens.RPAREN:
         return (_CE_ENDS, token), None
 
