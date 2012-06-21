@@ -1,6 +1,7 @@
 import TestConfig
 import unittest
-import Parser
+import Parse
+import Tokenize
 from Token import *
 from Exp import *
 
@@ -73,11 +74,11 @@ class ExpressionTest(unittest.TestCase):
         return tokens, expected
 
     def _parseAsList(self, tokenIter, expectedLen):
-        result = list(Parser.parse(tokenIter))
+        result = list(Parse.parse(tokenIter))
         self.assertEqual(expectedLen, len(result))
 
         for item in result:
-            self.assertEqual(Parser._OK, item[0])
+            self.assertEqual(Parse._OK, item[0])
 
         return [item[1] for item in result]
 
