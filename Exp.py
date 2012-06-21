@@ -35,6 +35,8 @@ class CompoundExp:
 
     def isCompound(self):
         return True
+    def isKeyword(self):
+        return self.operator in Tokens.keywords
 
     def __str__(self):
         # TODO what if the opeator is the build-in operator?
