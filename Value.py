@@ -1,3 +1,4 @@
+#### Value Types ####
 class Values:
     BOOLEAN = 1
     STRING = 2
@@ -6,6 +7,23 @@ class Values:
     PAIR = 5
     PROCEDURE = 6
 
+#### Value Representation ####
+class Value:
+    def __init__(self, valueType, val):
+        self.valueType = valueType
+        self.val = val
+
+class Pair:
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+
+class Procedure:
+    def __init__(self, proc, isUserDefined = True):
+        self.proc = proc
+        self.isUserDefined = isUserDefined
+
+#### Value Constructors ####
 def makeString(val):
     """ val should be python's string """
     return Value(Values.STRING, val)
@@ -19,14 +37,11 @@ def makeBoolean(val):
 def makeSymbol(val):
     """ val should be python's string """
     return Value(Values.SYMBOL, val)
-def makePair(val):
+def makePair(first, second):
     """ val should be python's binary tuple """
+    val = Pair(first, second)
     return Value(Values.PAIR, val)
-def makePrecedure(val):
-    return Values(Values.PROCEDURE, (True, val))
-
-class Value:
-    def __init__(self, valueType, val):
-        self.valueType = valueType
-        self.val = val
+def makeProcedure(proc, isUserDefined = True):
+    val = Procedure(proc, isUserDefined)
+    return Value(Values.PROCEDURE, val)
 

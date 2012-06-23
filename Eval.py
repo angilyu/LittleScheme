@@ -25,7 +25,7 @@ def _evalDefine(params, env):
 
     # TODO: should add error report here
     result = seval(params[1], env)
-    if result[0] != Eval.OK:
+    if result[0] != EvalError.OK:
         return result
 
     env[symb.literal] = result[1]
@@ -43,7 +43,7 @@ def _assignmentEval(params, env):
 
     # TODO: should add error report here
     result = seval(params[1], env)
-    if result[0] != Eval.OK:
+    if result[0] != EvalError.OK:
         return result
 
     env[symb.literal] = result[1]
@@ -74,7 +74,7 @@ def _evalCompound(compound, env):
                 return result
             parameters.append(result[1])
 
-        return sapply(op, parameters, env)
+        return sapply(op.val, parameters, env)
 
 def _evalAtom(atom, env):
     if atom.tokenType in _atomProcessors:
@@ -93,8 +93,8 @@ def seval(exp, env):
 
 def sapply(op, params, env):
     # builtin functions 
-    if op[0] == False:
-        return EvalError.OK, op[1](params)
+    if op.isUserDefined == False:
+        return EvalError.OK, op.proc(params)
     else:
         env = setupEnv(env, params)
         return seval(op, env)
