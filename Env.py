@@ -9,9 +9,13 @@ class Env(dict):
     def __init__(self, parent = None):
         self.parent = parent
 
-    def spawn(self):
-        """ returns a new env with current env as the parent """ 
-        return Env(self)
+    def spawn(self, params, args):
+        """ returns a new env with current env as the parent """
+        env = Env(self)
+        for index in xrange(len(params)):
+            env[params[index]] = args[index]
+
+        return env
 
     def __getitem__(self, key):
         if dict.__contains__(self, key):

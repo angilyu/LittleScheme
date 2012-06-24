@@ -10,8 +10,6 @@ class EvalError:
     UNMATCH_PARAM_NUMBER = 4
     EMPTY_LIST = 5
 
-#### Eval atom expressions ####
-
 #### Evaluating the build-in operations ####
 def _evalDefine(params, env):
     # Check correctness
@@ -65,6 +63,14 @@ def _evalParams(params, env):
 
     return EvalError.OK, parameters
 
+def _evalExpSeq(exps, env):
+    # Evaluate Sequence
+    for exp in exps:
+        result = eval(exp, env)
+        if result[0] != EvalError.OK:
+            return result
+    return result
+
 def _evalList(slist, env):
     if len(slist) == 0:
         return EvalError.EMPTY_LIST,
@@ -92,22 +98,16 @@ def eval(exp, env):
         return EvalError.OK, \
                env[exp.val] if exp.valueType == Values.SYMBOL else exp
 
-def apply(proc, params):
+def apply(proc, args):
     # builtin functions 
     if proc.isUserDefined == False:
-        return EvalError.OK, proc.body(params)
+        return EvalError.OK, proc.body(args)
     else:
-        paramList = proc.params
-        newEnv = proc.env.spawn()
         # setup environment
-        assert len(params) == len(paramList)
+        assert len(args) == len(proc.params)
+        env = proc.env.spawn(proc.params, args)
 
-        for index in xrange(len(params)):
-            newEnv[paramList[index]] = params[index]
+        # Evaluate Sequence
+        return _evalExpSeq(proc.body, env)
 
-        for exp in proc.body:
-            result = eval(exp, newEnv)
-            if result[0] != EvalError.OK:
-                return result
-        return result
 
