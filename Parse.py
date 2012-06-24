@@ -1,5 +1,5 @@
 from Token import *
-from Exp import *
+import Value
 
 ####### Error code #######
 # TODO: the error code should be public
@@ -8,11 +8,6 @@ _CE_ENDS = 1 # compound expression ends
 _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
 _EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
 _NOT_AN_EXPRESSION = 4
-
-BUILDIN_OPERATORS = set([Tokens.DEFINE, Tokens.COND, Tokens.IF,
-                         Tokens.ELSE, Tokens.ASSIGNMENT, Tokens.LAMBDA])
-def _isBuildin(exp):
-    return not exp.isCompound() and exp.tokenType in BUILDIN_OPERATORS
 
 def _parse(tokenIter):
     """ _parse() recursively extract the expression from the given
@@ -29,7 +24,7 @@ def _parse(tokenIter):
     # All tokens, except the special characters, are considered
     # to be "atom"
     if not token.tokenType in Tokens.specialCharacters:
-        return _OK, AtomExp(token)
+        return _OK, Value.makeFromToken(token)
 
     # check if this is the end of an compound expression
     if token.tokenType == Tokens.RPAREN:
@@ -41,15 +36,7 @@ def _parse(tokenIter):
     if token.tokenType != Tokens.LPAREN:
         return (_EXPECT_LPAREN, token), None
 
-    # -- Read operator
-    error, op = _parse(tokenIter)
-    if error != _OK:
-        return _EMPTY_EXPRESSION, result
-    # check if the operator is a buildin operator
-    if _isBuildin(op):
-        op = op.tokenType
-    exp = CompoundExp(op)
-
+    sList = []
     # Read parameters
     while True:
         error, param = _parse(tokenIter)
@@ -62,12 +49,15 @@ def _parse(tokenIter):
             else:
                 return error, param
 
+        """
         if _isBuildin(param):
             return _NOT_AN_EXPRESSION, param
+        """
 
-        exp.addParameter(param)
+        sList.append(param)
+        # exp.addParameter(param)
 
-    return _OK, exp
+    return _OK, Value.makeList(sList)
 
 def parse(tokenIter):
     while True:

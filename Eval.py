@@ -8,12 +8,9 @@ class EvalError:
     UNEXPECTED_TYPE = 2
     INVALID_PARAM_LIST = 3
     UNMATCH_PARAM_NUMBER = 4
+    EMPTY_LIST = 5
 
 #### Eval atom expressions ####
-_atomProcessors = {
-    Tokens.STRING: makeString,
-    Tokens.NUMBER: makeNumber,
-}
 
 #### Evaluating the build-in operations ####
 def _evalDefine(params, env):
@@ -22,15 +19,15 @@ def _evalDefine(params, env):
         return INCORRECT_PARAM_NUMBER, 2, len(params)
 
     symb = params[0]
-    if symb.isCompound() or symb.tokenType != Tokens.VARIABLE:
-        return UNEXPECTED_TYPE, Tokens.VARIABLE, 0
+    if symb.valueType != Values.SYMBOL:
+        return UNEXPECTED_TYPE, Values.SYMBOL, 0
 
     # TODO: should add error report here
     result = seval(params[1], env)
     if result[0] != EvalError.OK:
         return result
 
-    env[symb.literal] = result[1]
+    env[symb.val] = result[1]
     return EvalError.OK, None
 
 def _evalLambda(params, env):
@@ -38,11 +35,9 @@ def _evalLambda(params, env):
     assert len(params) >= 2
 
     # extract the param list
-    paramList = [params[0].operator]
-    paramList.extend(params[0].parameters)
+    paramList = params[0].val
 
-    if any(param.isCompound() or param.tokenType != Tokens.VARIABLE \
-            for param in paramList):
+    if any(param.valueType != Values.SYMBOL for param in paramList):
         return EvalError.INVALID_PARAM_LIST, None
 
     # extract body
@@ -70,37 +65,32 @@ def _evalParams(params, env):
 
     return EvalError.OK, parameters
 
-def _evalCompound(compound, env):
-    if compound.isKeyword():
-        return _keywordEvalTable[compound.operator](compound.parameters, env)
+def _evalList(slist, env):
+    if len(slist) == 0:
+        return EvalError.EMPTY_LIST,
+    op = slist[0]
+
+    if op.val in Tokens.keywords:
+        return _keywordEvalTable[op.val](slist[1:], env)
     else:
-        result = seval(compound.operator, env)
+        result = seval(op, env)
         if result[0] != EvalError.OK:
             return result
 
         op = result[1]
-        result = _evalParams(compound.parameters, env)
+        result = _evalParams(slist[1:], env)
         if result[0] != EvalError.OK:
             return result
 
         return sapply(op.val, result[1])
 
-def _evalAtom(atom, env):
-    if atom.tokenType in _atomProcessors:
-        return EvalError.OK, _atomProcessors[atom.tokenType](atom.literal)
-    elif atom.tokenType == Tokens.TRUE or atom.tokenType == Tokens.FALSE:
-        return EvalError.OK, makeBoolean(atom.tokenType == Tokens.TRUE)
-    elif atom.tokenType == Tokens.VARIABLE:
-        return EvalError.OK, env[atom.literal]
-    else:
-        assert False
-
 ############## Public Interface ##############
 def seval(exp, env):
-    if not exp.isCompound():
-        return _evalAtom(exp, env)
+    if exp.valueType == Values.LIST:
+        return _evalList(exp.val, env)
     else:
-        return _evalCompound(exp, env)
+        return EvalError.OK, \
+               env[exp.val] if exp.valueType == Values.SYMBOL else exp
 
 def sapply(proc, params):
     # builtin functions 
