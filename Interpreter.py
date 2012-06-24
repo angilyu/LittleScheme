@@ -18,7 +18,7 @@ class Interpreter:
             if success != Parse._OK:
                 print "Error occurs:", success
                 return
-            return Eval.seval(exp, self.glob)[1]
+            return Eval.eval(exp, self.glob)[1]
 
 it = Interpreter()
 it.execute("(define a 1)")

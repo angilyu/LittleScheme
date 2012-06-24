@@ -23,7 +23,7 @@ def _evalDefine(params, env):
         return UNEXPECTED_TYPE, Values.SYMBOL, 0
 
     # TODO: should add error report here
-    result = seval(params[1], env)
+    result = eval(params[1], env)
     if result[0] != EvalError.OK:
         return result
 
@@ -58,7 +58,7 @@ _keywordEvalTable = {
 def _evalParams(params, env):
     parameters = []
     for param in params:
-        result = seval(param, env)
+        result = eval(param, env)
         if result[0] != EvalError.OK:
             return result
         parameters.append(result[1])
@@ -73,7 +73,7 @@ def _evalList(slist, env):
     if op.val in Tokens.keywords:
         return _keywordEvalTable[op.val](slist[1:], env)
     else:
-        result = seval(op, env)
+        result = eval(op, env)
         if result[0] != EvalError.OK:
             return result
 
@@ -82,17 +82,17 @@ def _evalList(slist, env):
         if result[0] != EvalError.OK:
             return result
 
-        return sapply(op.val, result[1])
+        return apply(op.val, result[1])
 
 ############## Public Interface ##############
-def seval(exp, env):
+def eval(exp, env):
     if exp.valueType == Values.LIST:
         return _evalList(exp.val, env)
     else:
         return EvalError.OK, \
                env[exp.val] if exp.valueType == Values.SYMBOL else exp
 
-def sapply(proc, params):
+def apply(proc, params):
     # builtin functions 
     if proc.isUserDefined == False:
         return EvalError.OK, proc.body(params)
@@ -106,7 +106,7 @@ def sapply(proc, params):
             newEnv[paramList[index]] = params[index]
 
         for exp in proc.body:
-            result = seval(exp, newEnv)
+            result = eval(exp, newEnv)
             if result[0] != EvalError.OK:
                 return result
         return result
