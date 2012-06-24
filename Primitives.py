@@ -8,7 +8,7 @@ def minus(params):
     return Value.makeNumber(params[0].val - params[1].val)
 
 BuildIns = {
-    "+": Value.makeProcedure(add, False),
-    "-": Value.makeProcedure(minus, False),
+    "+": Value.makeProcedure(add, None, None, False),
+    "-": Value.makeProcedure(minus, None, None, False),
 }
 

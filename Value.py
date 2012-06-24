@@ -19,8 +19,10 @@ class Pair:
         self.second = second
 
 class Procedure:
-    def __init__(self, proc, isUserDefined = True):
-        self.proc = proc
+    def __init__(self, body, params, env, isUserDefined = True):
+        self.body = body
+        self.params = params
+        self.env = env
         self.isUserDefined = isUserDefined
 
 #### Value Constructors ####
@@ -41,7 +43,7 @@ def makePair(first, second):
     """ val should be python's binary tuple """
     val = Pair(first, second)
     return Value(Values.PAIR, val)
-def makeProcedure(proc, isUserDefined = True):
-    val = Procedure(proc, isUserDefined)
+def makeProcedure(body, params, env, isUserDefined = True):
+    val = Procedure(body, params, env, isUserDefined)
     return Value(Values.PROCEDURE, val)
 

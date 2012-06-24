@@ -6,6 +6,8 @@ class EvalError:
     OK = 0,
     INCORRECT_PARAM_NUMBER = 1
     UNEXPECTED_TYPE = 2
+    INVALID_PARAM_LIST = 3
+    UNMATCH_PARAM_NUMBER = 4
 
 #### Eval atom expressions ####
 _atomProcessors = {
@@ -31,23 +33,23 @@ def _evalDefine(params, env):
     env[symb.literal] = result[1]
     return EvalError.OK, None
 
-# TODO: this function has a lot of duplication
-def _assignmentEval(params, env):
-    # Check correctness
-    if len(params) != 2:
-        return INCORRECT_PARAM_NUMBER, 2, len(params)
+def _evalLambda(params, env):
+    # TODO
+    assert len(params) >= 2
 
-    symb = params[0]
-    if symb.isCompound() or symb.tokenType != Tokens.VARIABLE:
-        return UNEXPECTED_TYPE, Tokens.VARIABLE, 0
+    # extract the param list
+    paramList = [params[0].operator]
+    paramList.extend(params[0].parameters)
 
-    # TODO: should add error report here
-    result = seval(params[1], env)
-    if result[0] != EvalError.OK:
-        return result
+    if any(param.isCompound() or param.tokenType != Tokens.VARIABLE \
+            for param in paramList):
+        return EvalError.INVALID_PARAM_LIST, None
 
-    env[symb.literal] = result[1]
-    return EvalError.OK, None
+    # extract body
+    body = params[1:]
+
+    return EvalError.OK, makeProcedure(body, params[1:], env)
+
 
 _keywordEvalTable = {
     Tokens.DEFINE: _evalDefine,
@@ -55,8 +57,18 @@ _keywordEvalTable = {
     Tokens.ELSE: None,
     Tokens.IF: None,
     Tokens.ASSIGNMENT: None,
-    Tokens.LAMBDA: None,
+    Tokens.LAMBDA: _evalLambda,
 }
+
+def _evalParams(params, env):
+    parameters = []
+    for param in params:
+        result = seval(param, env)
+        if result[0] != EvalError.OK:
+            return result
+        parameters.append(result[1])
+
+    return EvalError.OK, parameters
 
 def _evalCompound(compound, env):
     if compound.isKeyword():
@@ -67,14 +79,11 @@ def _evalCompound(compound, env):
             return result
 
         op = result[1]
-        parameters = []
-        for param in compound.parameters:
-            result = seval(param, env)
-            if result[0] != EvalError.OK:
-                return result
-            parameters.append(result[1])
+        result = _evalParams(compound.parameters, env)
+        if result[0] != EvalError.OK:
+            return result
 
-        return sapply(op.val, parameters, env)
+        return sapply(op.val, result[1])
 
 def _evalAtom(atom, env):
     if atom.tokenType in _atomProcessors:
@@ -88,13 +97,27 @@ def _evalAtom(atom, env):
 
 ############## Public Interface ##############
 def seval(exp, env):
-    return _evalCompound(exp, env) if exp.isCompound() else \
-           _evalAtom(exp, env)
-
-def sapply(op, params, env):
-    # builtin functions 
-    if op.isUserDefined == False:
-        return EvalError.OK, op.proc(params)
+    if not exp.isCompound():
+        return _evalAtom(exp, env)
     else:
-        env = setupEnv(env, params)
-        return seval(op, env)
+        return _evalCompound(exp, env)
+
+def sapply(proc, params):
+    # builtin functions 
+    if proc.isUserDefined == False:
+        return EvalError.OK, proc.body(params)
+    else:
+        paramList = proc.params
+        newEnv = proc.env.spawn()
+        # setup environment
+        assert len(params) == len(paramList)
+
+        for index in xrange(len(params)):
+            newEnv[paramList[index]] = params[index]
+
+        for exp in proc.body:
+            result = seval(exp, newEnv)
+            if result[0] != EvalError.OK:
+                return result
+        return result
+

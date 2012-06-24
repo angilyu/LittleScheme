@@ -9,8 +9,8 @@ _EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
 _EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
 _NOT_AN_EXPRESSION = 4
 
-BUILDIN_OPERATORS = set([ Tokens.DEFINE, Tokens.COND, Tokens.IF,
-                          Tokens.ELSE, Tokens.ASSIGNMENT, Tokens.LAMBDA])
+BUILDIN_OPERATORS = set([Tokens.DEFINE, Tokens.COND, Tokens.IF,
+                         Tokens.ELSE, Tokens.ASSIGNMENT, Tokens.LAMBDA])
 def _isBuildin(exp):
     return not exp.isCompound() and exp.tokenType in BUILDIN_OPERATORS
 
