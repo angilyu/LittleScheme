@@ -49,13 +49,7 @@ def _parse(tokenIter):
             else:
                 return error, param
 
-        """
-        if _isBuildin(param):
-            return _NOT_AN_EXPRESSION, param
-        """
-
         sList.append(param)
-        # exp.addParameter(param)
 
     return _OK, Value.makeList(sList)
 
