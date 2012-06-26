@@ -1,7 +1,10 @@
 from Token import *
 import Value
 
-####### Error code #######
+####### Parse Errors #######
+class ParseError:
+    OK = 0
+
 # TODO: the error code should be public
 _OK = 0 # Expression has been extracted
 _CE_ENDS = 1 # compound expression ends

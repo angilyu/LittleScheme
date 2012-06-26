@@ -17,6 +17,17 @@ _BUILDIN_OPERATORS = set([Tokens.DEFINE, Tokens.COND, Tokens.IF,
 
 #### Value Representation ####
 class Value:
+    toStringHandlers = {
+        Values.NUMBER: lambda val: str(val),
+        Values.STRING: lambda val: '"%s"' % val,
+        Values.BOOLEAN: lambda val: '#t' if val else '#f',
+        Values.SYMBOL: lambda val: "'%s" % val,
+        Values.PAIR: lambda val: "%s . %s" % (str(val.first), str(val.second)),
+        Values.PROCEDURE: lambda val: "<function>",
+        Values.LIST: lambda val: "(%s)" % " ".join(str(item) for item in val),
+        Values.NULL: lambda val: "null",
+        Values.KEYWORD: lambda val: Tokens.tokenNames[val],
+    }
     def __init__(self, valueType, val):
         self.valueType = valueType
         self.val = val
@@ -24,8 +35,7 @@ class Value:
         return self.valueType == other.valueType and \
                self.val == other.val
     def __str__(self):
-        return "%d:%s" % (self.valueType, self.val)
-
+        return Value.toStringHandlers[self.valueType](self.val)
 class Pair:
     def __init__(self, first, second):
         self.first = first
