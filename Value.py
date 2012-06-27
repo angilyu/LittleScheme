@@ -17,6 +17,7 @@ _BUILDIN_OPERATORS = set([Tokens.DEFINE, Tokens.COND, Tokens.IF,
 
 #### Value Representation ####
 class Value:
+    # Used for __str__
     toStringHandlers = {
         Values.NUMBER: lambda val: str(val),
         Values.STRING: lambda val: '"%s"' % val,
@@ -29,6 +30,7 @@ class Value:
         Values.KEYWORD: lambda val: Tokens.tokenNames[val],
     }
     def __init__(self, valueType, val):
+        """ initialize things """
         self.valueType = valueType
         self.val = val
     def __eq__(self, other):
