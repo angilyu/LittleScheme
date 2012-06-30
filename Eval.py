@@ -41,7 +41,7 @@ def _evalLambda(params, env):
     # extract body
     body = params[1:]
 
-    return EvalError.OK, makeProcedure(body, params[1:], env)
+    return EvalError.OK, makeProcedure(body, paramList, env)
 
 
 _keywordEvalTable = {
@@ -72,6 +72,11 @@ def _evalExpSeq(exps, env):
     return result
 
 def _evalList(slist, env):
+    """
+        Evaluate the expression list. The list contains operator and parameters
+        @params slist is the combination of operator and parameters of expression. operator is the first element.
+        @params evn is the environment varibles
+    """
     if len(slist) == 0:
         return EvalError.EMPTY_LIST,
     op = slist[0]
@@ -84,6 +89,7 @@ def _evalList(slist, env):
             return result
 
         op = result[1]
+        # TODO _evalParams and _evalExpSeq seems to be duplicated?
         result = _evalParams(slist[1:], env)
         if result[0] != EvalError.OK:
             return result
@@ -99,7 +105,8 @@ def eval(exp, env):
                env[exp.val] if exp.valueType == Values.SYMBOL else exp
 
 def apply(proc, args):
-    # builtin functions 
+    # builtin functions
+    # TODO: what if the build-in function return some errors.
     if proc.isUserDefined == False:
         return EvalError.OK, proc.body(args)
     else:
@@ -109,5 +116,3 @@ def apply(proc, args):
 
         # Evaluate Sequence
         return _evalExpSeq(proc.body, env)
-
-
