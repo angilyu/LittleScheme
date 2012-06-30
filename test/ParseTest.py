@@ -3,7 +3,6 @@ import unittest
 import Tokenize
 from Parse import *
 from Token import *
-from Exp import *
 from Value import *
 
 class ParseTest(unittest.TestCase):
