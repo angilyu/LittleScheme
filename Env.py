@@ -13,7 +13,7 @@ class Env(dict):
         """ returns a new env with current env as the parent """
         env = Env(self)
         for index in xrange(len(params)):
-            env[params[index]] = args[index]
+            env[params[index].val] = args[index]
 
         return env
 
