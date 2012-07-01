@@ -20,8 +20,3 @@ class Interpreter:
                 return
             return Eval.eval(exp, self.glob)[1]
 
-it = Interpreter()
-it.execute("(define b 1)")
-#it.execute("(define add (lambda (a) (+ a 3)))")
-#print it.execute("(+ b 6)").val
-#print it.execute("(add b)").val
