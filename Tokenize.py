@@ -119,8 +119,7 @@ def _extractVariable(text, pos):
         return Token(tokenType, originalPos, literal), pos
 
 def _extractToken(text, pos):
-    """ TODO: Please add comment on the return value """
-
+    """ @return A Pair, the first element is a Token, the second element is the start position of the token """
     result = _extractSpectialChar(text, pos)
 
     # extract string
