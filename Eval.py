@@ -12,27 +12,36 @@ class EvalError:
 
 #### Evaluating the build-in operations ####
 def _evalDefine(params, env):
-    # Check correctness
+    """
+    Evaluate define expression
+    """
+    # Check the correctness of define expression
     if len(params) != 2:
         return INCORRECT_PARAM_NUMBER, 2, len(params)
 
+    # for example: "define size (+ 3 5)", params[0] is size
     symb = params[0]
     if symb.valueType != Values.SYMBOL:
         return UNEXPECTED_TYPE, Values.SYMBOL, 0
 
     # TODO: should add error report here
+    # for example: "define size (+ 3 5)", params[1] is (+ 3 5)
     result = eval(params[1], env)
     if result[0] != EvalError.OK:
         return result
 
+    # result[1] is the eval result of (+ 3 5)
     env[symb.val] = result[1]
     return EvalError.OK, None
 
 def _evalLambda(params, env):
-    # TODO
+    """
+    Evaluate lambda expression
+    """
+    # lambda expression should have at least 2 parameters
     assert len(params) >= 2
 
-    # extract the param list
+    # extract lambda expression's param list
     paramList = params[0].val
 
     if any(param.valueType != Values.SYMBOL for param in paramList):
@@ -42,7 +51,6 @@ def _evalLambda(params, env):
     body = params[1:]
 
     return EvalError.OK, makeProcedure(body, paramList, env)
-
 
 _keywordEvalTable = {
     Tokens.DEFINE: _evalDefine,
@@ -54,6 +62,9 @@ _keywordEvalTable = {
 }
 
 def _evalParams(params, env):
+    """
+    Evaluate all the parameters
+    """
     parameters = []
     for param in params:
         result = eval(param, env)
@@ -64,7 +75,9 @@ def _evalParams(params, env):
     return EvalError.OK, parameters
 
 def _evalExpSeq(exps, env):
-    # Evaluate Sequence
+    """
+    Evaluate expression sequences and return the result of the last expression
+    """
     for exp in exps:
         result = eval(exp, env)
         if result[0] != EvalError.OK:
@@ -79,22 +92,21 @@ def _evalList(slist, env):
     """
     if len(slist) == 0:
         return EvalError.EMPTY_LIST,
-    op = slist[0]
 
+    op = slist[0]
     if op.val in Tokens.keywords:
         return _keywordEvalTable[op.val](slist[1:], env)
     else:
-        result = eval(op, env)
-        if result[0] != EvalError.OK:
-            return result
+        opResult = eval(op, env)
+        if opResult[0] != EvalError.OK:
+            return opResult
 
-        op = result[1]
-        # TODO _evalParams and _evalExpSeq seems to be duplicated?
-        result = _evalParams(slist[1:], env)
-        if result[0] != EvalError.OK:
-            return result
+        op = opResult[1]
+        paramResult = _evalParams(slist[1:], env)
+        if paramResult[0] != EvalError.OK:
+            return paramResult
 
-        return apply(op.val, result[1])
+        return apply(op.val, paramResult[1])
 
 ############## Public Interface ##############
 def eval(exp, env):
@@ -112,6 +124,8 @@ def apply(proc, args):
     else:
         # setup environment
         assert len(args) == len(proc.params)
+
+        # generate a new environment dict for new procedure. The new env's parent is the old env
         env = proc.env.spawn(proc.params, args)
 
         # Evaluate Sequence
