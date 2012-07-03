@@ -23,8 +23,11 @@ class Tokens:
     NULL = 25 # NULL
     LAMBDA = 26 # lambda
 
+    # -- Error
+    ERROR = 30
+
     # -- Undefined
-    UNDEFINED = 30
+    UNDEFINED = 40
 
     ##### TOKEN Names #####
     tokenNames = {
@@ -66,3 +69,7 @@ class Token:
         self.tokenType = tokenType
         self.pos = pos
         self.literal = literal
+    def __str__(self):
+        return "Type:%d\tPos:%d" % (self.tokenType, self.pos)
+    def isError(self):
+        return self.tokenType == Tokens.ERROR

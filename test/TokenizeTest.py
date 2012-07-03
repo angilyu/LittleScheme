@@ -4,10 +4,6 @@ import Tokenize
 from Token import *
 
 class SkipFunctionsTest(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
     def test_skipWhiteSpaces(self):
         # text with leading spaces
         text = "    \n\r\t    \n\r\t  text"
@@ -46,9 +42,11 @@ class SkipFunctionsTest(unittest.TestCase):
         self.assertEqual(result[1], 1)
         self.assertTokenEqual(result[0], Token(Tokens.LPAREN, 0))
 
+        """
         text = "   "
         result = Tokenize._extractToken(text, 0)
         self.assertIsNone(result)
+        """
     def test_tokenzie(self):
         text = \
 """("hi, I am Wenjing"  #t  #f result cond 123
@@ -80,6 +78,13 @@ class SkipFunctionsTest(unittest.TestCase):
         self.assertTokenEqual(results[2], Token(Tokens.STRING, 6, "hello"))
         self.assertTokenEqual(results[3], Token(Tokens.NUMBER, 14, 12))
         self.assertTokenEqual(results[4], Token(Tokens.RPAREN, 16))
+
+    def test_tokenize_unidentifiableToken(self):
+        text = "#f#k"
+        result = list(Tokenize.tokenize(text,0))
+        self.assertTokenEqual(result[0], Token(Tokens.FALSE, 0))
+        self.assertTokenEqual(result[1], Token(Tokens.ERROR, 2))
+
     # Helpers
     def assertTokenEqual(self, token1, token2):
         if token1 == None:

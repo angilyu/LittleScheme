@@ -1,6 +1,9 @@
 import string
 from Token import *
 
+######## Tokenize Errors ########
+class TokenizeError:
+    UNIDENTIFIABLE_TOKEN = 0
 ######## CONSTANTS ########
 _COMMENT_STARTER_ = ';'
 SPECIAL_CHARS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
@@ -42,7 +45,7 @@ def _skip(text, pos):
     return pos
 
 ######## EXTRACT TOKENS ########
-def _extractSpectialChar(text, pos):
+def _extractSpecialChar(text, pos):
     if text[pos] in SPECIAL_CHARS:
         return Token(SPECIAL_CHARS[text[pos]], pos), pos + 1
 
@@ -120,7 +123,8 @@ def _extractVariable(text, pos):
 
 def _extractToken(text, pos):
     """ @return A Pair, the first element is a Token, the second element is the start position of the token """
-    result = _extractSpectialChar(text, pos)
+    # extract special char
+    result = _extractSpecialChar(text, pos)
 
     # extract string
     if result is None:
@@ -130,9 +134,13 @@ def _extractToken(text, pos):
     if result is None:
         result = _extractBoolean(text, pos)
 
-    #extract variable
+    # extract variable
     if result is None:
         result = _extractVariable(text, pos)
+
+    # none of above
+    if result is None:
+        result = (Token(Tokens.ERROR, pos), pos)
 
     return result
 
@@ -145,9 +153,10 @@ def tokenize(text, pos):
         pos = _skip(text, pos)
         if pos < len(text):
             result = _extractToken(text, pos)
-            if result is None:
+            token, pos = result
+            if token.isError():
+                yield token
                 break
             else:
-                token, pos = result
                 yield token
 
