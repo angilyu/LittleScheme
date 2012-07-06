@@ -3,7 +3,8 @@ from Token import *
 
 ######## Tokenize Errors ########
 class TokenizeError:
-    UNIDENTIFIABLE_TOKEN = 0
+    ILLEGAL_TOKEN = 1
+
 ######## CONSTANTS ########
 _COMMENT_STARTER_ = ';'
 SPECIAL_CHARS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}

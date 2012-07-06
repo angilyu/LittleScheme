@@ -8,6 +8,7 @@ class ParseError:
     EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
     EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
     NOT_AN_EXPRESSION = 4
+    TOKENIZE_ERROR = 5
 
 def _parse(tokenIter):
     """ _parse() recursively extract the expression from the given
@@ -20,8 +21,11 @@ def _parse(tokenIter):
                 be None if error occurs.
     """
     token = tokenIter.next()
+    # Token type is ERROR
+    if token.tokenType == Tokens.ERROR:
+        return (ParseError.TOKENIZE_ERROR, token), None
 
-    # All tokens, except the special characters, are considered
+    # All tokens, except the special characters, are considered. special char are: ( ) '
     if not token.tokenType in Tokens.specialCharacters:
         return ParseError.OK, Value.makeFromToken(token)
 
@@ -39,6 +43,8 @@ def _parse(tokenIter):
     # Read parameters, operator is placed together with parameter as the first element of the list
     while True:
         error, param = _parse(tokenIter)
+        print error
+        print param
 
         if error != ParseError.OK:
             # reach the end the this expression?
@@ -46,10 +52,13 @@ def _parse(tokenIter):
                 break
             # or real error occurs
             else:
+                print "No right )"
                 return error, param
 
         sList.append(param)
+        print sList
 
+    print "out of while"
     return ParseError.OK, Value.makeList(sList)
 
 def parse(tokenIter):
