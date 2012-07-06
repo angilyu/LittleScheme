@@ -58,5 +58,14 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(expectedOne, actual[0])
         self.assertEqual(expectedTwo, actual[1])
 
+    def test_illegal_expression(self):
+        tokens = Tokenize.tokenize("(define size 3", 0)
+        result = list(parse(tokens))
+        print "dongxi", result
+
+    def test_illegal_token_expression(self):
+        tokens = Tokenize.tokenize("(define size #a)", 0)
+        result = list(parse(tokens))
+        print result
 if __name__ == '__main__':
     unittest.main()
