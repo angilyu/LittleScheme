@@ -7,7 +7,7 @@ class TokenizeError:
 
 ######## CONSTANTS ########
 _COMMENT_STARTER_ = ';'
-SPECIAL_CHARS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
+_SPECIAL_CHARS = {"(": Tokens.LPAREN, ")": Tokens.RPAREN, "'": Tokens.QUOTE}
 _PRIMITIVES = ["#t","#f"]
 _LEGAL_VAR_CHARS = string.letters + string.digits + "!$%&*+-./:<=>?@^_~"
 _ESCAPED_CHARS = {"\\":"\\", "\"":"\"", "a":"\a", "b":"\b", "f":"\f", "n":"\n",
@@ -47,8 +47,8 @@ def _skip(text, pos):
 
 ######## EXTRACT TOKENS ########
 def _extractSpecialChar(text, pos):
-    if text[pos] in SPECIAL_CHARS:
-        return Token(SPECIAL_CHARS[text[pos]], pos), pos + 1
+    if text[pos] in _SPECIAL_CHARS:
+        return Token(_SPECIAL_CHARS[text[pos]], pos), pos + 1
 
     return None
 
