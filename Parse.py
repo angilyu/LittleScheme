@@ -8,6 +8,8 @@ class ParseError:
     EXPECT_LPAREN = 2 # expect left parenthesis but didn't get it.
     EMPTY_EXPRESSION = 3 # EMPTY EXPRESSION
     NOT_AN_EXPRESSION = 4
+    TOKEN_NORMALLY_ENDS = 5
+    TOKEN_UNEXPECTED_ENDS = 6
 
 def _parse(tokenIter):
     """ _parse() recursively extract the expression from the given
@@ -19,7 +21,10 @@ def _parse(tokenIter):
                 the second parameter is the extracted expression, which will
                 be None if error occurs.
     """
-    token = tokenIter.next()
+    try:
+        token = tokenIter.next()
+    except StopIteration:
+        return ParseError.TOKEN_NORMALLY_ENDS, None
 
     # All tokens, except the special characters, are considered
     if not token.tokenType in Tokens.specialCharacters:
@@ -44,6 +49,8 @@ def _parse(tokenIter):
             # reach the end the this expression?
             if error[0] == ParseError.CE_ENDS:
                 break
+            elif error[0] == ParseError.TOKEN_NORMALLY_ENDS:
+                return ParseError.TOKEN_UNEXPECTED_ENDS, None
             # or real error occurs
             else:
                 return error, param
@@ -54,4 +61,11 @@ def _parse(tokenIter):
 
 def parse(tokenIter):
     while True:
-        yield _parse(tokenIter)
+        error, param = _parse(tokenIter)
+        # ends normally
+        if error == ParseError.TOKEN_NORMALLY_ENDS:
+            break
+
+        yield error, param
+        if error != ParseError.OK:
+            break
