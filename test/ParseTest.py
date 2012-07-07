@@ -59,13 +59,23 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(expectedTwo, actual[1])
 
     def test_illegal_expression(self):
-        tokens = Tokenize.tokenize("(define size 3", 0)
+        tokens = Tokenize.tokenize("(define size 3(cons 3 4)", 0)
         result = list(parse(tokens))
-        print "dongxi", result
+        self.assertEqual(1, len(result))
+        self.assertEqual(ParseError.TOKEN_UNEXPECTED_ENDS, result[0][0])
 
     def test_illegal_token_expression(self):
         tokens = Tokenize.tokenize("(define size #a)", 0)
         result = list(parse(tokens))
-        print result
+        self.assertEqual(1, len(result))
+        self.assertEqual(ParseError.TOKENIZE_ERROR, result[0][0])
+        self.assertEqual(Token(Tokens.ERROR, 13), result[0][1])
+
+"""
+    def test_literal_expression(self):
+        tokens = Tokenize.tokenize("'(cons a b)", 0)
+        result = list(parse(tokens))
+"""
+
 if __name__ == '__main__':
     unittest.main()

@@ -71,5 +71,8 @@ class Token:
         self.literal = literal
     def __str__(self):
         return "Type:%d\tPos:%d" % (self.tokenType, self.pos)
+    def __eq__(self, other):
+        return self.tokenType == other.tokenType and \
+                self.pos == other.pos
     def isError(self):
         return self.tokenType == Tokens.ERROR

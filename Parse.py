@@ -26,9 +26,10 @@ def _parse(tokenIter):
         token = tokenIter.next()
     except StopIteration:
         return ParseError.TOKEN_NORMALLY_ENDS, None
+
     # Token type is ERROR
     if token.tokenType == Tokens.ERROR:
-        return (ParseError.TOKENIZE_ERROR, token), None
+        return ParseError.TOKENIZE_ERROR, token
 
     # All tokens, except the special characters, are considered. special char are: ( ) '
     if not token.tokenType in Tokens.specialCharacters:
@@ -36,36 +37,31 @@ def _parse(tokenIter):
 
     # check if this is the end of an expression
     if token.tokenType == Tokens.RPAREN:
-        return (ParseError.CE_ENDS, token), None
+        return ParseError.CE_ENDS, token
 
     # If the token either indicates the expression element
     # (operator, parameters)nor the end of expression, then it
     # must be the "beginning" of a expression.
     if token.tokenType != Tokens.LPAREN:
-        return (_EXPECT_LPAREN, token), None
+        return ParseError._EXPECT_LPAREN, token
 
     sList = []
     # Read parameters, operator is placed together with parameter as the first element of the list
     while True:
         error, param = _parse(tokenIter)
-        print error
-        print param
 
         if error != ParseError.OK:
             # reach the end the this expression?
-            if error[0] == ParseError.CE_ENDS:
+            if error == ParseError.CE_ENDS:
                 break
-            elif error[0] == ParseError.TOKEN_NORMALLY_ENDS:
-                return ParseError.TOKEN_UNEXPECTED_ENDS, None
+            elif error == ParseError.TOKEN_NORMALLY_ENDS:
+                return ParseError.TOKEN_UNEXPECTED_ENDS, None #position: the end of the expression
             # or real error occurs
             else:
-                print "No right )"
                 return error, param
 
         sList.append(param)
-        print sList
 
-    print "out of while"
     return ParseError.OK, Value.makeList(sList)
 
 def parse(tokenIter):
