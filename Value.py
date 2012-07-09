@@ -11,6 +11,7 @@ class Values:
     LIST = 7
     NULL = 8
     KEYWORD = 9
+    LITERAL = 10 # expression after quote
 
 _BUILDIN_OPERATORS = set([Tokens.DEFINE, Tokens.COND, Tokens.IF,
                          Tokens.ELSE, Tokens.ASSIGNMENT, Tokens.LAMBDA])
@@ -28,6 +29,7 @@ class Value:
         Values.LIST: lambda val: "(%s)" % " ".join(str(item) for item in val),
         Values.NULL: lambda val: "null",
         Values.KEYWORD: lambda val: Tokens.tokenNames[val],
+        Values.LITERAL: lambda val: "<literal>",
     }
     def __init__(self, valueType, val):
         """ initialize things """
@@ -60,7 +62,6 @@ def makeNumber(val):
 def makeBoolean(val):
     """ val can be either python's True/False """
     return Value(Values.BOOLEAN, val)
-
 def makeSymbol(val):
     """ val should be python's string """
     return Value(Values.SYMBOL, val)
@@ -74,10 +75,11 @@ def makeKeyword(tokenType):
     return Value(Values.KEYWORD, tokenType)
 def makeNULL():
     return Value(Values.NULL, None)
+def makeLiteral(val):
+    return Value(Values.LITERAL, val)
 def makeProcedure(body, params, env, isUserDefined = True):
     val = Procedure(body, params, env, isUserDefined)
     return Value(Values.PROCEDURE, val)
-
 def makeFromToken(token):
     if token.tokenType == Tokens.NUMBER:
         return makeNumber(token.literal)

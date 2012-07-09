@@ -71,11 +71,17 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(ParseError.TOKENIZE_ERROR, result[0][0])
         self.assertEqual(Token(Tokens.ERROR, 13), result[0][1])
 
-"""
     def test_literal_expression(self):
-        tokens = Tokenize.tokenize("'(cons a b)", 0)
+        tokens = Tokenize.tokenize("'(cons a b) 'c", 0)
         result = list(parse(tokens))
-"""
 
+        partialTokens = Tokenize.tokenize("(cons a b)", 0)
+        partialResult = list(parse(partialTokens))
+
+        self.assertEqual(result[0][1].valueType, Values.LITERAL)
+        self.assertEqual(result[0][1].val, partialResult[0][1])
+
+        self.assertEqual(result[1][1].valueType, Values.LITERAL)
+        self.assertEqual(result[1][1].val, makeSymbol("c"))
 if __name__ == '__main__':
     unittest.main()

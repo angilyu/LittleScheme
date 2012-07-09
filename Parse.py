@@ -39,11 +39,16 @@ def _parse(tokenIter):
     if token.tokenType == Tokens.RPAREN:
         return ParseError.CE_ENDS, token
 
+    """
     # If the token either indicates the expression element
     # (operator, parameters)nor the end of expression, then it
     # must be the "beginning" of a expression.
     if token.tokenType != Tokens.LPAREN:
-        return ParseError._EXPECT_LPAREN, token
+        return ParseError.EXPECT_LPAREN, token
+    """
+    if token.tokenType == Tokens.QUOTE:
+        error, result = _parse(tokenIter)
+        return ParseError.OK, Value.makeLiteral(result)
 
     sList = []
     # Read parameters, operator is placed together with parameter as the first element of the list
